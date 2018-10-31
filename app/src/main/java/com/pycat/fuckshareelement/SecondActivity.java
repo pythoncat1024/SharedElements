@@ -1,9 +1,8 @@
 package com.pycat.fuckshareelement;
 
 import android.os.Bundle;
-import android.transition.Explode;
-import android.transition.Slide;
-import android.view.Gravity;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 
 public class SecondActivity extends BaseActivity {
 
@@ -11,7 +10,9 @@ public class SecondActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-        getWindow().setEnterTransition(new Slide(Gravity.END));
+        Transition transition =
+            TransitionInflater.from(get()).inflateTransition(R.transition.slide);
+        getWindow().setEnterTransition(transition);
     }
 
     @Override

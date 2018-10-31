@@ -23,11 +23,11 @@ public abstract class BaseActivity extends AppCompatActivity {
  * <pre>
  *
  * //退出时使用
- * getWindow().setExitTransition(explode);
+ * getWindow().setExitTransition(slide);
  * //第一次进入时使用
- * getWindow().setEnterTransition(explode);
+ * getWindow().setEnterTransition(slide);
  * //再次进入时使用
- * getWindow().setReenterTransition(explode);
+ * getWindow().setReenterTransition(slide);
  * 作者：huachao1001
  * 链接：https://www.jianshu.com/p/37e94f8b6f59
  * 來源：简书

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<slide xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/decelerate_cubic"
+    android:slideEdge="end"
+    android:transitionOrdering="sequential">
+  <targets>
+    <!-- excludeID 指定了，但是没有什么效果-->
+    <target android:excludeId="@android:id/navigationBarBackground"/>
+    <target android:excludeId="@android:id/statusBarBackground"/>
+  </targets>
+</slide>
