@@ -73,23 +73,14 @@
 
         <TextView
             android:id="@+id/tv_first"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@color/colorTabTextCheck"
             android:gravity="center"
             android:text="@string/first"
             android:textColor="@color/color_page_bg"
-            android:textSize="23sp" />
-
-        <TextView
-            android:id="@+id/tv_second"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@color/colorBtDialog"
-            android:gravity="center"
-            android:text="@string/second"
-            android:textColor="@color/colorTabBg"
-            android:textSize="23sp" />
+            android:textSize="23sp"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:layout_width="100dp"
@@ -123,6 +114,18 @@
             android:text="@string/first"
             android:textColor="@color/color_page_bg"
             android:textSize="23sp" />
+
+        <TextView
+            android:id="@+id/tv_second"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:background="@color/colorBtDialog"
+            android:gravity="center"
+            android:text="@string/second"
+            android:textColor="@color/colorTabBg"
+            android:textSize="23sp"
+            android:textStyle="bold|italic" />
+
     </com.google.android.flexbox.FlexboxLayout>
 
 </RelativeLayout>
