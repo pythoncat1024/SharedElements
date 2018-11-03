@@ -50,6 +50,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onActivityReenter(int resultCode, Intent data) {
         super.onActivityReenter(resultCode, data);
+        LogUtils.d("...");
     }
 
 

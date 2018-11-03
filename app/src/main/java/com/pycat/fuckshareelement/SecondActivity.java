@@ -8,6 +8,7 @@ import android.support.v4.view.ViewCompat;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.apkfuns.logutils.LogUtils;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
@@ -62,4 +63,11 @@ public class SecondActivity extends BaseActivity {
         super.onDestroy();
         //getWindow().setExitTransition(new Explode()); // 无效，还是被 onCreate 里面的效果钳制！
     }
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+        LogUtils.d("...");
+    }
+
 }

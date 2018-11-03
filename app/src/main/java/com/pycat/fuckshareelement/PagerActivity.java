@@ -24,7 +24,7 @@ import com.pycat.fuckshareelement.base.GlideApp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PagerActivity extends BaseActivity {
+public class PagerActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
 
     private ViewPager mViewPager;
     private int initPosition;
@@ -42,9 +42,55 @@ public class PagerActivity extends BaseActivity {
         mViewPager = findViewById(R.id.pager_view_pager);
         mViewPager.setAdapter(new Adapter(urlList));
         mViewPager.setCurrentItem(initPosition);
+        mViewPager.addOnPageChangeListener(this);
         supportPostponeEnterTransition(); // 先不要加载转场动画
     }
 
+    @Override
+    protected void onDestroy() {
+        mViewPager.removeOnPageChangeListener(this);
+        super.onDestroy();
+    }
+
+    /**
+     * This method will be invoked when the current page is scrolled, either as part
+     * of a programmatically initiated smooth scroll or a user initiated touch scroll.
+     *
+     * @param position Position index of the first page currently being displayed.
+     *                 Page position+1 will be visible if positionOffset is nonzero.
+     * @param positionOffset Value from [0, 1) indicating the offset from the page at position.
+     * @param positionOffsetPixels Value in pixels indicating the offset from position.
+     */
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels){
+
+    }
+
+    /**
+     * This method will be invoked when a new page becomes selected. Animation is not
+     * necessarily complete.
+     *
+     * @param position Position index of the new selected page.
+     */
+    @Override
+    public void onPageSelected(int position){
+
+    }
+
+    /**
+     * Called when the scroll state changes. Useful for discovering when the user
+     * begins dragging, when the pager is automatically settling to the current page,
+     * or when it is fully stopped/idle.
+     *
+     * @param state The new scroll state.
+     * @see com.android.internal.widget.ViewPager#SCROLL_STATE_IDLE
+     * @see com.android.internal.widget.ViewPager#SCROLL_STATE_DRAGGING
+     * @see com.android.internal.widget.ViewPager#SCROLL_STATE_SETTLING
+     */
+    @Override
+    public void onPageScrollStateChanged(int state){
+
+    }
     class Adapter extends PagerAdapter {
 
         private final List<String> mUrls;

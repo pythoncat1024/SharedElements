@@ -5,13 +5,17 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 
+import com.apkfuns.logutils.LogUtils;
+
 public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS); // 01.开启转场动画
+        getWindow().setAllowEnterTransitionOverlap(true); // 官方文档说加
         setTitle(getClass().getSimpleName());
+        LogUtils.v(getClass().getSimpleName());
     }
 
     protected AppCompatActivity get() {
