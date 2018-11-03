@@ -1,4 +1,4 @@
-package com.pycat.fuckshareelement;
+package com.pycat.fuckshareelement.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

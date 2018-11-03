@@ -7,27 +7,29 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Explode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ToggleButton;
 
 import com.apkfuns.logutils.LogUtils;
+import com.pycat.fuckshareelement.base.BaseActivity;
 import com.pycat.fuckshareelement.base.BaseKey;
 import com.pycat.fuckshareelement.base.GlideApp;
 import com.pycat.fuckshareelement.utils.UrlUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
 
 
     private RecyclerView mRecyclerView;
+    private ToggleButton mToggleButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class MainActivity extends BaseActivity {
         List<String> urls = UrlUtils.returnImageUrls();
         MainAdapter adapter = new MainAdapter(urls);
         mRecyclerView.setAdapter(adapter);
+        mToggleButton = findViewById(R.id.main_toggle_button);
     }
 
     @Override
@@ -90,17 +93,25 @@ public class MainActivity extends BaseActivity {
             ViewCompat.setTransitionName(vh.itemImg, urlStr);
 
             vh.itemImg.setOnClickListener(v -> {
-                Intent intent = new Intent(get(), SecondActivity.class);
-                intent.putExtra(BaseKey.KEY_SINGLE_URL, urlStr);
+                if (mToggleButton.isChecked()) {
+                    // start view pager
+                    Intent intent = new Intent(get(), PagerActivity.class);
+                    intent.putExtra(BaseKey.KEY_CURRENT_POSITION, adapterPosition);
+                    intent.putExtra(BaseKey.KEY_MULTI_URL_SET,(ArrayList<String>)mUrls);
+                    ActivityCompat.startActivity(get(), intent, null);
+                } else {
+                    // start single image
+                    Intent intent = new Intent(get(), SecondActivity.class);
+                    intent.putExtra(BaseKey.KEY_SINGLE_URL, urlStr);
 
-                Pair<View, String> viewStringPair = new Pair<>(vh.itemImg,
-                        ViewCompat.getTransitionName(vh.itemImg)
-                );
-                @SuppressWarnings("unchecked")
-                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
-                        .makeSceneTransitionAnimation(get(), viewStringPair);
-
-                ActivityCompat.startActivity(get(), intent, optionsCompat.toBundle());
+                    Pair<View, String> viewStringPair = new Pair<>(vh.itemImg,
+                            ViewCompat.getTransitionName(vh.itemImg)
+                    );
+                    @SuppressWarnings("unchecked")
+                    ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
+                            .makeSceneTransitionAnimation(get(), viewStringPair);
+                    ActivityCompat.startActivity(get(), intent, optionsCompat.toBundle());
+                }
             });
         }
 

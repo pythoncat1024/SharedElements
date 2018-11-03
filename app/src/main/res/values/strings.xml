@@ -1,5 +1,7 @@
 <resources>
-  <string name="app_name">FuckShareElement</string>
-  <string name="first">first</string>
-  <string name="second">second</string>
+    <string name="app_name">FuckShareElement</string>
+    <string name="first">first</string>
+    <string name="second">second</string>
+    <string name="open_single_image">open single Image</string>
+    <string name="open_view_pager">open view pager</string>
 </resources>

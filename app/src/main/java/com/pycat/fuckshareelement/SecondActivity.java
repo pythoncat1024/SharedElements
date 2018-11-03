@@ -3,11 +3,9 @@ package com.pycat.fuckshareelement;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
-import android.transition.Explode;
-import android.view.View;
 import android.widget.ImageView;
 
-import com.bumptech.glide.request.RequestFutureTarget;
+import com.pycat.fuckshareelement.base.BaseActivity;
 import com.pycat.fuckshareelement.base.BaseKey;
 import com.pycat.fuckshareelement.base.GlideApp;
 
