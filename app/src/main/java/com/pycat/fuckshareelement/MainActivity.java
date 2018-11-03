@@ -98,7 +98,15 @@ public class MainActivity extends BaseActivity {
                     Intent intent = new Intent(get(), PagerActivity.class);
                     intent.putExtra(BaseKey.KEY_CURRENT_POSITION, adapterPosition);
                     intent.putExtra(BaseKey.KEY_MULTI_URL_SET,(ArrayList<String>)mUrls);
-                    ActivityCompat.startActivity(get(), intent, null);
+
+                    Pair<View, String> viewStringPair = new Pair<>(vh.itemImg,
+                            ViewCompat.getTransitionName(vh.itemImg)
+                    );
+                    @SuppressWarnings("unchecked")
+                    ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
+                            .makeSceneTransitionAnimation(get(), viewStringPair);
+
+                    ActivityCompat.startActivity(get(), intent, optionsCompat.toBundle());
                 } else {
                     // start single image
                     Intent intent = new Intent(get(), SecondActivity.class);

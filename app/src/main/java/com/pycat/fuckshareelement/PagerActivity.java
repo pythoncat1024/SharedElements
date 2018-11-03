@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import java.util.List;
 public class PagerActivity extends BaseActivity {
 
     private ViewPager mViewPager;
+    private int initPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +29,7 @@ public class PagerActivity extends BaseActivity {
         setContentView(R.layout.activity_pager);
 
         Intent fromMain = getIntent();
-        int initPosition = fromMain.getIntExtra(BaseKey.KEY_CURRENT_POSITION, 0);
+        initPosition = fromMain.getIntExtra(BaseKey.KEY_CURRENT_POSITION, 0);
         String keyMultiUrlSet = BaseKey.KEY_MULTI_URL_SET;
         ArrayList<String> urlList = fromMain.getStringArrayListExtra(keyMultiUrlSet);
 
@@ -47,10 +49,15 @@ public class PagerActivity extends BaseActivity {
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            String imgUrl = mUrls.get(position);
             View view = LayoutInflater.from(get())
                     .inflate(R.layout.item_pager_layout, container, false);
             ImageView pagerImg = view.findViewById(R.id.item_pager_image);
-            String imgUrl = mUrls.get(position);
+
+            if (position == initPosition) {
+                ViewCompat.setTransitionName(pagerImg, imgUrl);
+            }
+
             GlideApp.with(get())
                     .load(imgUrl)
                     .error(R.mipmap.ic_launcher_round)
