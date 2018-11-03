@@ -1,5 +1,6 @@
 package com.pycat.fuckshareelement;
 
+import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.apkfuns.logutils.LogUtils;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
@@ -23,11 +25,14 @@ import com.pycat.fuckshareelement.base.GlideApp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PagerActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
 
     private ViewPager mViewPager;
-    private int initPosition;
+    private int initPosition; // 从 recyclerView 过来的时候，传递过来的 pos
+    private int mCurrentPos; // 当前 pos
+    private Adapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +41,13 @@ public class PagerActivity extends BaseActivity implements ViewPager.OnPageChang
 
         Intent fromMain = getIntent();
         initPosition = fromMain.getIntExtra(BaseKey.KEY_CURRENT_POSITION, 0);
+        mCurrentPos = initPosition;
         String keyMultiUrlSet = BaseKey.KEY_MULTI_URL_SET;
         ArrayList<String> urlList = fromMain.getStringArrayListExtra(keyMultiUrlSet);
 
         mViewPager = findViewById(R.id.pager_view_pager);
-        mViewPager.setAdapter(new Adapter(urlList));
+        mPagerAdapter = new Adapter(urlList);
+        mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setCurrentItem(initPosition);
         mViewPager.addOnPageChangeListener(this);
         supportPostponeEnterTransition(); // 先不要加载转场动画
@@ -52,45 +59,66 @@ public class PagerActivity extends BaseActivity implements ViewPager.OnPageChang
         super.onDestroy();
     }
 
-    /**
-     * This method will be invoked when the current page is scrolled, either as part
-     * of a programmatically initiated smooth scroll or a user initiated touch scroll.
-     *
-     * @param position Position index of the first page currently being displayed.
-     *                 Page position+1 will be visible if positionOffset is nonzero.
-     * @param positionOffset Value from [0, 1) indicating the offset from the page at position.
-     * @param positionOffsetPixels Value in pixels indicating the offset from position.
-     */
     @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels){
+    public void onBackPressed() {
+        if (mCurrentPos != initPosition) {
+            Intent intent = new Intent();
+            Intent data = intent.putExtra(BaseKey.KEY_CURRENT_POSITION, mCurrentPos);
+            setResult(RESULT_OK, data);
+            supportPostponeEnterTransition(); // 暂停转场-a
+        } else {
+            setResult(RESULT_OK);
+        }
+
+        finishAfterTransition();
+    }
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
 
-    /**
-     * This method will be invoked when a new page becomes selected. Animation is not
-     * necessarily complete.
-     *
-     * @param position Position index of the new selected page.
-     */
+
     @Override
-    public void onPageSelected(int position){
+    public void onPageSelected(int position) {
+        mCurrentPos = position;
+        setEnterSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                // 通过这个方法重置 共享元素
+                LogUtils.w(names);
+                LogUtils.d(sharedElements);
+                names.clear();
+                sharedElements.clear();
+                // 获取指定 position 对应的 item 的  xml 根布局 view
+                Object object = mPagerAdapter.instantiateItem(mViewPager, mCurrentPos);
+                LogUtils.v(object);
+                if (object instanceof ViewGroup) {
+                    ViewGroup itemRoot = (ViewGroup) object;
+                    View itemImg = itemRoot.findViewById(R.id.item_pager_image);
+                    String imgUrl = mPagerAdapter.mUrls.get(mCurrentPos);
+                    names.add(imgUrl);
+                    sharedElements.put(names.get(0), itemImg);
+//                    LogUtils.e(names); // ok
+//                    LogUtils.e(sharedElements); // ok
+
+                } else {
+                    throw new RuntimeException("把 item xml 根布局换成 view group.");
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
 
     }
 
-    /**
-     * Called when the scroll state changes. Useful for discovering when the user
-     * begins dragging, when the pager is automatically settling to the current page,
-     * or when it is fully stopped/idle.
-     *
-     * @param state The new scroll state.
-     * @see com.android.internal.widget.ViewPager#SCROLL_STATE_IDLE
-     * @see com.android.internal.widget.ViewPager#SCROLL_STATE_DRAGGING
-     * @see com.android.internal.widget.ViewPager#SCROLL_STATE_SETTLING
-     */
-    @Override
-    public void onPageScrollStateChanged(int state){
-
-    }
     class Adapter extends PagerAdapter {
 
         private final List<String> mUrls;
@@ -153,5 +181,7 @@ public class PagerActivity extends BaseActivity implements ViewPager.OnPageChang
         public boolean isViewFromObject(@NonNull View view, @NonNull Object obj) {
             return view == obj;
         }
+
+
     }
 }

@@ -1,5 +1,6 @@
 package com.pycat.fuckshareelement.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,23 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected AppCompatActivity get() {
         return this;
+    }
+
+
+    /**
+     * 回调时机，当 a->b 通过 startActivityForResult(intent,requestCode,bundle); 调用，
+     * 然后 从 b 返回 a 的时候，回调该方法
+     * <p>
+     * 并且，该方法会在 onActivityResult() 方法之前回调
+     *
+     * @param resultCode code
+     * @param data
+     */
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+        LogUtils.e(getClass().getSimpleName() + ":onActivityReenter.....");
+        LogUtils.v(data);
     }
 }
 

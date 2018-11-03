@@ -1,10 +1,13 @@
 package com.pycat.fuckshareelement;
 
+import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -16,6 +19,9 @@ import com.bumptech.glide.request.target.Target;
 import com.pycat.fuckshareelement.base.BaseActivity;
 import com.pycat.fuckshareelement.base.BaseKey;
 import com.pycat.fuckshareelement.base.GlideApp;
+
+import java.util.List;
+import java.util.Map;
 
 public class SecondActivity extends BaseActivity {
 
@@ -56,12 +62,34 @@ public class SecondActivity extends BaseActivity {
                     }
                 })
                 .into(img);
+
+        setExitSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                LogUtils.v(names);
+                LogUtils.v(sharedElements);
+            }
+        });
+
+        setEnterSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                LogUtils.w(names);
+                LogUtils.w(sharedElements);
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         //getWindow().setExitTransition(new Explode()); // 无效，还是被 onCreate 里面的效果钳制！
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        super.onBackPressed();
     }
 
     @Override

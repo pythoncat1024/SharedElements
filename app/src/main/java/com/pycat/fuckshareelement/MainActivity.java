@@ -3,8 +3,10 @@ package com.pycat.fuckshareelement;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.SharedElementCallback;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -24,12 +26,19 @@ import com.pycat.fuckshareelement.utils.UrlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends BaseActivity {
 
 
     private RecyclerView mRecyclerView;
     private ToggleButton mToggleButton;
+
+    private static final int REQUEST_SINGLE = 1;
+    private static final int REQUEST_MULTI = 2;
+    private Intent mUpdateBundle; // 更新后的 共享元素
+    private List<String> urls;
+    private GridLayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,21 +47,65 @@ public class MainActivity extends BaseActivity {
 //        getWindow().setEnterTransition(new Explode());
 //        getWindow().setExitTransition(new Explode());
         mRecyclerView = findViewById(R.id.main_recycler_view);
-        GridLayoutManager layoutManager = new GridLayoutManager(get(), 3,
+        mLayoutManager = new GridLayoutManager(get(), 3,
                 LinearLayout.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        List<String> urls = UrlUtils.returnImageUrls();
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        urls = UrlUtils.returnImageUrls();
         MainAdapter adapter = new MainAdapter(urls);
         mRecyclerView.setAdapter(adapter);
         mToggleButton = findViewById(R.id.main_toggle_button);
+
+        setExitSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                LogUtils.v(names);
+                LogUtils.v(sharedElements);
+                if (mUpdateBundle != null) {
+                    int newPosition = mUpdateBundle
+                            .getIntExtra(BaseKey.KEY_CURRENT_POSITION, 0);
+                    names.clear();
+                    sharedElements.clear();
+                    names.add(urls.get(newPosition));
+                    // 获取 recyclerView 的 item xml 根布局 view
+                    ViewGroup targetV = (ViewGroup) mLayoutManager.findViewByPosition(newPosition);
+                    LogUtils.d(targetV);
+                    View itemImg = targetV.findViewById(R.id.item_main_img);
+                    sharedElements.put(names.get(0), itemImg);
+                    supportStartPostponedEnterTransition(); // 启动转场-a
+                }
+            }
+        });
+
+        setEnterSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                LogUtils.w(names);
+                LogUtils.w(sharedElements);
+            }
+        });
     }
 
     @Override
     public void onActivityReenter(int resultCode, Intent data) {
         super.onActivityReenter(resultCode, data);
+        this.mUpdateBundle = data;
         LogUtils.d("...");
+        if(data!=null){
+//            supportPostponeEnterTransition(); // 暂停转场-a
+        }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (RESULT_OK == resultCode) {
+            if (requestCode == REQUEST_SINGLE) {
+                LogUtils.w("return from single");
+            } else if (requestCode == REQUEST_MULTI) {
+                LogUtils.w("return from multi");
+            }
+        }
+    }
 
     class VH extends RecyclerView.ViewHolder {
 
@@ -98,7 +151,7 @@ public class MainActivity extends BaseActivity {
                     // start view pager
                     Intent intent = new Intent(get(), PagerActivity.class);
                     intent.putExtra(BaseKey.KEY_CURRENT_POSITION, adapterPosition);
-                    intent.putExtra(BaseKey.KEY_MULTI_URL_SET,(ArrayList<String>)mUrls);
+                    intent.putExtra(BaseKey.KEY_MULTI_URL_SET, (ArrayList<String>) mUrls);
 
                     Pair<View, String> viewStringPair = new Pair<>(vh.itemImg,
                             ViewCompat.getTransitionName(vh.itemImg)
@@ -107,7 +160,10 @@ public class MainActivity extends BaseActivity {
                     ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
                             .makeSceneTransitionAnimation(get(), viewStringPair);
 
-                    ActivityCompat.startActivity(get(), intent, optionsCompat.toBundle());
+                    ActivityCompat.startActivityForResult(get(),
+                            intent,
+                            REQUEST_MULTI,
+                            optionsCompat.toBundle());
                 } else {
                     // start single image
                     Intent intent = new Intent(get(), SecondActivity.class);
@@ -119,7 +175,10 @@ public class MainActivity extends BaseActivity {
                     @SuppressWarnings("unchecked")
                     ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
                             .makeSceneTransitionAnimation(get(), viewStringPair);
-                    ActivityCompat.startActivity(get(), intent, optionsCompat.toBundle());
+                    ActivityCompat.startActivityForResult(get(),
+                            intent,
+                            REQUEST_SINGLE,
+                            optionsCompat.toBundle());
                 }
             });
         }
