@@ -33,8 +33,8 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getWindow().setEnterTransition(new Explode());
-        getWindow().setExitTransition(new Explode());
+//        getWindow().setEnterTransition(new Explode());
+//        getWindow().setExitTransition(new Explode());
         mRecyclerView = findViewById(R.id.main_recycler_view);
         GridLayoutManager layoutManager = new GridLayoutManager(get(), 3,
                 LinearLayout.VERTICAL, false);
@@ -87,11 +87,20 @@ public class MainActivity extends BaseActivity {
                     .error(R.mipmap.ic_launcher_round)
                     .centerCrop()
                     .into(vh.itemImg);
+            ViewCompat.setTransitionName(vh.itemImg, urlStr);
 
             vh.itemImg.setOnClickListener(v -> {
                 Intent intent = new Intent(get(), SecondActivity.class);
                 intent.putExtra(BaseKey.KEY_SINGLE_URL, urlStr);
-                ActivityCompat.startActivity(get(), intent, null);
+
+                Pair<View, String> viewStringPair = new Pair<>(vh.itemImg,
+                        ViewCompat.getTransitionName(vh.itemImg)
+                );
+                @SuppressWarnings("unchecked")
+                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(get(), viewStringPair);
+
+                ActivityCompat.startActivity(get(), intent, optionsCompat.toBundle());
             });
         }
 

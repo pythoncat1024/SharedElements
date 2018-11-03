@@ -7,6 +7,7 @@ import android.transition.Explode;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.request.RequestFutureTarget;
 import com.pycat.fuckshareelement.base.BaseKey;
 import com.pycat.fuckshareelement.base.GlideApp;
 
@@ -17,13 +18,16 @@ public class SecondActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-        getWindow().setEnterTransition(new Explode());
-        getWindow().setExitTransition(new Explode());
+//        getWindow().setEnterTransition(new Explode());
+//        getWindow().setExitTransition(new Explode());
 
         Intent fromMain = getIntent();
         String imgUrl = fromMain.getStringExtra(BaseKey.KEY_SINGLE_URL);
 
         ImageView img = findViewById(R.id.second_big_img);
+
+        ViewCompat.setTransitionName(img, imgUrl);
+
         GlideApp.with(get()).load(imgUrl)
                 .centerCrop()
                 .placeholder(R.mipmap.ic_launcher)
