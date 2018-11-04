@@ -1,6 +1,7 @@
 package com.pycat.fuckshareelement;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,12 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.apkfuns.logutils.LogUtils;
 import com.pycat.fuckshareelement.base.BaseActivity;
 import com.pycat.fuckshareelement.base.BaseKey;
 import com.pycat.fuckshareelement.base.GlideApp;
+import com.pycat.fuckshareelement.utils.ToastHelper;
 import com.pycat.fuckshareelement.utils.UrlUtils;
 
 import java.util.ArrayList;
@@ -90,7 +93,7 @@ public class MainActivity extends BaseActivity {
         super.onActivityReenter(resultCode, data);
         this.mUpdateBundle = data;
         LogUtils.d("...");
-        if(data!=null){
+        if (data != null) {
 //            supportPostponeEnterTransition(); // 暂停转场-a
         }
     }
@@ -147,6 +150,22 @@ public class MainActivity extends BaseActivity {
             ViewCompat.setTransitionName(vh.itemImg, urlStr);
 
             vh.itemImg.setOnClickListener(v -> {
+                // test toast:
+                if (1 == 1) {
+//                    ToastHelper.show(get(), "可以再爱我一次吗？富婆。", Toast.LENGTH_LONG);
+                    if (mToggleButton.isChecked()) {
+                        ToastHelper.show(get(), "不爱了。--富婆。", Toast.LENGTH_LONG);
+                    } else {
+//                        Toast.makeText(get(),"我是平凡鸭",Toast.LENGTH_LONG).show();
+                        new ToastHelper.Builder(get())
+                                .setIcon(R.drawable.ic_assignment_turned_in_black_24dp)
+                                .setWrapperBackgroundColor(Color.RED)
+                                .setTextColor(Color.WHITE)
+                                .setTextSize(12)
+                                .show("可以再爱我一次吗？富婆。", Toast.LENGTH_LONG);
+                    }
+                    return;
+                }
                 if (mToggleButton.isChecked()) {
                     // start view pager
                     Intent intent = new Intent(get(), PagerActivity.class);
